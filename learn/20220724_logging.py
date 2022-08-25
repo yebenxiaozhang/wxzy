@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 handle1 = logging.StreamHandler()
 # 配置日志输出在那些渠道
 
-fmt = '%(asctime)s %(name)s %(levelname)s %(filename)s-%(lineno)d行: %(message)s'
+fmt = '%(asctime)s %(name)s %(levelname)s %(filename)s-%(lineno)d line: %(message)s'
 formatter = logging.Formatter(fmt)
 # 设置渠道输出内容格式
 
