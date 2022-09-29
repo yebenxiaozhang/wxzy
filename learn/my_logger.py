@@ -1,9 +1,10 @@
 import logging
+from learn.handle_config import conf
 
 
 class MyLogger(logging.Logger):
 
-    def __init__(self, name,  level=logging.INFO, file=None):
+    def __init__(self, name,  level="INFO", file=None):
         # 设置输出级别、输出渠道、输出日志格式
         super().__init__(name, level)
 
@@ -23,9 +24,20 @@ class MyLogger(logging.Logger):
             self.addHandler(handle2)
 
 
-logger = MyLogger("wxzy", file="my_logger.log")
+# 是否需要写入文件
+if conf.getboolean("log", "file_ok"):
+    file_name = conf.get("log", "file_name")
+else:
+    file_name = None
 
-if __name__ == '__main__':
-    mlogger = MyLogger("wxzy", file="my_logger.log")
-    mlogger.info("测试，我自己封装的日志类！！！！")
+logger = MyLogger(conf.get("log", "name"), conf.get("log", "level"), file_name)
+# logger = MyLogger(file_name)
+
+# logger.info("1111111111111111")
+
+# logger = MyLogger("wxzy")
+
+# if __name__ == '__main__':
+#     mlogger = MyLogger("wxzy")
+#     mlogger.info("测试，我自己封装的日志类！！！！")
 
