@@ -35,16 +35,31 @@ class HandleDB:
         self.cur = self.conn.cursor()
 
     def select_one_data(self, sql):
+        """
+        获取第一条数据
+        :param sql:
+        :return:
+        """
         self.conn.commit()
         self.cur.execute(sql)
         return self.cur.fetchone()
 
     def select_all_data(self, sql):
+        """
+        获取所有数据
+        :param sql:
+        :return:
+        """
         self.conn.commit()
         self.cur.execute(sql)
         return self.cur.fetchall()
 
     def get_count(self, sql):
+        """
+        获取条数
+        :param sql:
+        :return:
+        """
         self.conn.commit()
         return self.cur.execute(sql)
 
@@ -58,12 +73,16 @@ class HandleDB:
         self.conn.commit()
 
     def close(self):
+        """
+        关闭游标、关闭数据库链接
+        :return:
+        """
         self.cur.close()
         self.conn.close()
 
 
 if __name__ == '__main__':
-    # sql = 'select * from member LIMIT 3'
+    # sql = 'select * from goods LIMIT 3'
     # db = HandleDB()
     # count = db.get_count(sql)
     # print("结果个数为：",count)
@@ -74,7 +93,7 @@ if __name__ == '__main__':
     # db.close()
     # 初始化数据库对象
     db = HandleDB()
-    sql = 'select * from usr_member where phone="19859080323"'
+    sql = 'select * from usr_member where phone = "19859080323"'
     # 发起一个登录请求
     from Common.handle_requests import send_requests
     case = {
