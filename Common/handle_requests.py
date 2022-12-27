@@ -16,7 +16,10 @@ Company: 无限主义
 """
 
 import requests
+import json
+
 from Common.my_logger import logger
+from Common.handle_config import conf
 
 
 def __handle_header(token=None):
@@ -32,7 +35,6 @@ def __handle_header(token=None):
     return headers
 
 
-#
 def send_requests(method, url, data=None, token=None):
     """
 
@@ -45,6 +47,11 @@ def send_requests(method, url, data=None, token=None):
     logger.info("发起一次HTTP请求")
     # 得到请求头
     headers = __handle_header(token)
+    # 得到完整的url - 拼接url
+    url = __pre_url(url)
+    # 请求数据的处理 - 如果是字符串，则转换成字典对象。
+    data = __pre_data(data)
+    # 将请求数据转换成字典对象。
     logger.info("请求头为：{}".format(headers))
     logger.info("请求方法为：{}".format(method))
     logger.info("请求url为：{}".format(url))
@@ -58,6 +65,30 @@ def send_requests(method, url, data=None, token=None):
     logger.info("响应状态码为：{}".format(resp.status_code))
     logger.info("响应数据为：{}".format(resp.json()))
     return resp
+
+
+def __pre_url(url):
+    """
+    拼接接口的url地址。
+    :param url:
+    :return:
+    """
+    base_url = conf.get("server", "base_url")
+    if url.startswith("/"):
+        return base_url + url
+    else:
+        return base_url + "/" + url
+
+
+def __pre_data(data):
+    """
+    如果data是字符串，则转换成字典对象。
+    :param data:
+    :return:
+    """
+    if data is not None and isinstance(data, str):
+        return json.loads(data)
+    return data
 
 
 if __name__ == '__main__':
