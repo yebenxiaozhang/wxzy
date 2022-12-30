@@ -17,7 +17,7 @@ from Common.handle_path import datas_dir
 # print(os.path.dirname(os.path.abspath(__file__)))
 # 获取上一级路径
 
-# print(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_cases.xlsx'))
+# print(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'api_cases.xlsx'))
 # 路径拼接
 
 

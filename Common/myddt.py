@@ -32,7 +32,7 @@ index_len = 5              # default max length of case index
 
 
 try:
-    trivial_types = (type(None), bool, int, float, basestring)
+    trivial_types = (type(None), bool, int, float)
 except NameError:
     trivial_types = (type(None), bool, int, float, str)
 

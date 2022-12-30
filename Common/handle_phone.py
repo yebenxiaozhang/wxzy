@@ -8,6 +8,10 @@ Company: 无限主义
 """
 import random
 from Common.handle_db import HandleDB
+from Common.handle_path import conf_dir
+from Common.handle_config import conf
+from Common.handle_requests import send_requests
+
 
 """
 1、随机生成11位手机号  前3位+8位
@@ -30,10 +34,23 @@ def get_new_phone():
             return phone
 
 
+def get_ord_phone():
+    user = conf.get('user', 'user')
+    password = conf.get('user', 'password')
+    # 无论有无注册，直接登录
+    send_requests(method='post', data_type=1, url='api/auth/authentication/mobile',
+                  data={
+                      "appId": "wxdb8f809214c26e2e",
+                      "type": "moblile",
+                      "mobile": user,
+                      "smsCode": password
+                  })
+    return user, password
+
+
 def __generator_phone():
     index = random.randint(0, len(prefix)-1)
     phone = str(prefix[index])  # 前3位
     for _ in range(0, 8):   # 生成后8位
         phone += str(random.randint(0, 9))
     return phone
-
