@@ -46,16 +46,11 @@ class HandleExcel:
         """
         all_datas = []
         titles = self.__read_titles()
-        for item in list(self.sh.rows)[1:]:
+        for item in list(self.sh.rows)[1:]:  # 遍历数据行
             values = []
-            for val in item:
+            for val in item:  # 获取每一行的值
                 values.append(val.value)
-            res = dict(zip(titles, values))
-            # 将'{'key' : 'value'}' 转化为 {'key' : 'value'}
-            # res['check'] = eval(res['check'])
-
-            # 将请求数据从json字符串转换成字典对象。
-            res["request_data"] = json.loads(res["request_data"])
+            res = dict(zip(titles, values))  # title和每一行数据，打包成字典
             all_datas.append(res)
         return all_datas
 

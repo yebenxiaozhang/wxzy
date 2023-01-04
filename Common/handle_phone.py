@@ -28,7 +28,7 @@ def get_new_phone():
         # 1生成
         phone = __generator_phone()
         # 2校验，有
-        count = db.get_count('select * from member where mobile_phone="{}"'.format(phone))
+        count = db.get_count('select * from usr_member where phone="{}"'.format(phone))
         if count == 0:  # 如果手机号码没有在数据库查到。表示是未注册的号码。
             db.close()
             return phone

@@ -22,7 +22,7 @@ from Common.handle_config import conf
 """
 
 
-def __handle_header(data_type, token=None):
+def __handle_header(data_type, token=None, appid=None):
     """
     处理请求头。加上项目当中必带的请求头。如果有token，加上token。
     :param token: token值
@@ -36,10 +36,12 @@ def __handle_header(data_type, token=None):
 
     if token:
         headers["Authorization"] = "Bearer {}".format(token)
+    if appid:
+        headers["app"] = appid
     return headers
 
 
-def send_requests(method, url, data=None, token=None, data_type=1):
+def send_requests(method, url, data=None, token=None, data_type=1, appid=None):
     """
     :param method:
     :param url:
@@ -49,7 +51,7 @@ def send_requests(method, url, data=None, token=None, data_type=1):
     """
     logger.info("发起一次HTTP请求")
     # 得到请求头
-    headers = __handle_header(data_type, token)
+    headers = __handle_header(data_type, token, appid)
     # 得到完整的url - 拼接url
     # print('处理前的url', url)
     url = __pre_url(url)
@@ -66,8 +68,9 @@ def send_requests(method, url, data=None, token=None, data_type=1):
     urllib3.disable_warnings()  # 去除警告
     if method == "GET":
         resp = requests.get(url, data, headers=headers, verify=False)
+    elif method == 'PUT':
+        resp = requests.put(url, json=data, headers=headers, verify=False)
     else:
-
         if data_type == 1:
             resp = requests.post(url, json=data, headers=headers, verify=False)
         else:
