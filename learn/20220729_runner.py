@@ -22,3 +22,4 @@ s = unittest.TestLoader().discover(r"/")
 # 测试报告 html形式2
 br = BeautifulReport(s)
 br.report("这是测试报告标题", "bp_report.html")
+
