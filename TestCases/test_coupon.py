@@ -76,7 +76,7 @@ class TestCoupon(unittest.TestCase):
         # 字符串转化为字典
         expected = eval(case["request_data"])
         # expected = case["request_data"]
-        x, y = self.api.add_time(minutes=expected['minutes'])
+        x, y = self.api.add_time(minutes=case['minutes'])
         res = self.api.add_coupon(token=self.token, method=case['method'],
                                   couponName='优惠券' + x, appId=conf.get('user', 'appid'), startTime=x, endTime=y,
                                   perReceiveType=expected['perReceiveType'], perReceiveNum=expected['perReceiveNum'],
@@ -111,7 +111,7 @@ class TestCoupon(unittest.TestCase):
             if gather_1 is False:
                 gather_1 = '0'
             try:
-                if int(case['expected_1']) == 1:
+                if int(case['expected_2']) == 1:
                     self.assertIn((eval(case["request_data"])['couponId']), gather)
                     self.assertIn((eval(case["request_data"])['couponId']), gather_1)
                 else:
