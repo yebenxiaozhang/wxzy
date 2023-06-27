@@ -9,7 +9,7 @@ Company: 无限主义
 import datetime
 import math
 import time
-
+from typing import List, Dict
 from Common.handle_requests import send_requests
 from Common.handle_config import conf
 from jsonpath import jsonpath
@@ -20,61 +20,60 @@ class yinlian:
     def __init__(self):
         pass
 
-    def login(self, user, password):
+    def login(self, username: str, password: str) -> Dict:
         """
         登录
-        :param user: 用户名
+        :param username: 用户名
         :param password: 密码
-        :return:
+        :return: 返回登录响应结果
         """
-        res = send_requests(method='post', url='api/login',
-                            data={
-                                "username": user,
-                                "password": password
-                            })
+        data = {
+            "username": username,
+            "password": password
+        }
+        res = send_requests(method='post', url='api/login', data=data)
         return res
 
-
-    def blindboxlist(self, token, activityId=None, activityName=None,activityStatus=None,
-                     status=None, startTime=None,activityTime=None,pageNum=1,pageSize=10):
+    def blindboxlist(self, token: str, activity_id: str = None, activity_name: str = None,
+                     activity_status: int = None, status: int = None,
+                     start_time: str = None, end_time: str = None,
+                     page_num: int = 1, page_size: int = 10) -> Dict:
         """
         盲盒列表
-        :param token: token
-        :param activityId: 盲盒id，精准查询
-        :param activityName: 盲盒名称，模糊查询
-        :param activityStatus: 活动状态 0未开始 1进行中 2已结束 3已停用
+        :param token: 认证令牌
+        :param activity_id: 盲盒ID，精准查询
+        :param activity_name: 盲盒名称，模糊查询
+        :param activity_status: 活动状态 0未开始 1进行中 2已结束 3已停用
         :param status: 状态 0启用 1禁用
-        :param startTime: 活动开始时间
-        :param activityTime: 活动结束时间
-        :param pageNum: 页
-        :param pageSize: 每页显示数量
-        :return:
+        :param start_time: 活动开始时间
+        :param end_time: 活动结束时间
+        :param page_num: 页码
+        :param page_size: 每页显示数量
+        :return: 返回盲盒列表的响应结果
         """
-        res = send_requests(method='get',url='/api/blindbox/list',
-                            data={
-                                'id': activityId,
-                                'activityName': activityName,
-                                'activityStatus': activityStatus,
-                                'status': status,
-                                'activityTime.startTime': startTime,
-                                'activityTime.endTime': activityTime,
-                                'pageNum': pageNum,
-                                'pageSize': pageSize
-                            }, token=token)
+        data = {
+            'id': activity_id,
+            'activityName': activity_name,
+            'activityStatus': activity_status,
+            'status': status,
+            'activityTime.startTime': start_time,
+            'activityTime.endTime': end_time,
+            'pageNum': page_num,
+            'pageSize': page_size
+        }
+        res = send_requests(method='get', url='/api/blindbox/list', data=data, token=token)
         return res
 
-
-    def blindboxchangestatus(self, blindboxId, status, token):
+    def blindboxchangestatus(self, blindbox_id: str, status: int, token: str) -> Dict:
         """
         启用/禁用盲盒
-        :param blindboxId: 盲盒id
-        :param status: 0启用 1禁用
-        :param token:
-        :return:
+        :param blindbox_id: 盲盒ID
+        :param status: 状态 0启用 1禁用
+        :param token: 认证令牌
+        :return: 返回启用/禁用盲盒的响应结果
         """
-        res = send_requests(method='get',
-                            url='/prod-api/blindbox/changeStatus/' + blindboxId + '/' + status,
-                            token=token)
+        url = f'/prod-api/blindbox/changeStatus/{blindbox_id}/{status}'
+        res = send_requests(method='get', url=url, token=token)
         return res
 
 
@@ -162,80 +161,78 @@ class yinlian:
                              })
         return res
 
-    def getBlindbox(self, activityType=1):
+    def getBlindbox(self, activity_type: int = 1) -> Dict:
         """
-        :param activityType: 1盲盒 2翻牌
-        :return:
+        获取盲盒或翻牌活动详情
+        :param activity_type: 活动类型 (1盲盒, 2翻牌)
+        :return: 返回获取活动详情的响应结果
         """
-        res = send_requests(method='get', url='api/app/blindbox/getBlindbox/public',
-                            data={
-                                'activityType': activityType
-                            })
+        res = send_requests(method='get', url='/api/app/blindbox/getBlindbox/public', data={'activityType': activity_type})
         return res
 
-
-    def blindboxInfo(self, blindboxId, token, appId):
+    def blindboxInfo(self, blindbox_id: str, auth_token: str, app_id: str) -> Dict:
         """
-        活动详情
-        :param blindboxId:活动ID
-        :return:
+        获取活动详情
+        :param blindbox_id: 活动ID
+        :param auth_token: 认证令牌
+        :param app_id: 应用程序ID
+        :return: 返回获取活动详情的响应结果
         """
-        res = send_requests(method='get', url='/api/app/blindbox/query/my/blindboxInfo/' + blindboxId,
-                            data={
-                                'blindboxId': blindboxId
-                            }, token=token, appId=appId)
+        res = send_requests(method='get', url='/api/app/blindbox/query/my/blindboxInfo/' + blindbox_id,
+                            data={'blindboxId': blindbox_id}, token=auth_token, appId=app_id)
         return res
 
-    def blinboxlotterycarousel(self, blindboxId, token):
+    def blindboxlotterycarousel(self, blindbox_id: str, auth_token: str) -> Dict:
         """
-        盲盒中奖信息 - 首页滚动
-        :param blindboxId: 盲盒ID
-        :param token: token
-        :return:
+        获取盲盒中奖信息 - 首页滚动
+        :param blindbox_id: 盲盒ID
+        :param auth_token: 认证令牌
+        :return: 返回获取盲盒中奖信息的响应结果
         """
-        res = send_requests(method='get', url='/api/app/blindbox/lottery/carousel/' + blindboxId + '/public',
-                            data={
-                                'blindboxId': blindboxId
-                            }, token=token)
+        res = send_requests(method='get', url='/api/app/blindbox/lottery/carousel/' + blindbox_id + '/public',
+                            data={'blindboxId': blindbox_id}, token=auth_token)
         return res
 
-    def blindboxaddLottery(self, gettpye,token, appId=None):
+    def blindboxaddLottery(self, get_type: int, auth_token: str, app_id: str = None) -> Dict:
         """
         获取抽奖次数
-        :param gettpye: 2签到 6分享
-        :param token:
-        :return:
+        :param get_type: 获取类型 (2签到, 6分享)
+        :param auth_token: 认证令牌
+        :param app_id: 应用程序ID
+        :return: 返回获取抽奖次数的响应结果
         """
-        res = send_requests(method='get', url='api/app/blindbox/share/addLottery',
-                            data={'type': gettpye}, token=token, appId=appId)
+        res = send_requests(method='get', url='/api/app/blindbox/share/addLottery',
+                            data={'type': get_type}, token=auth_token, appId=app_id)
         return res
 
-    def blindboxIdlottery(self, blindboxId, token, appId):
+    def blindboxIdlottery(self, blind_box_id: int, auth_token: str, app_id: str) -> Dict:
         """
-        翻牌 -  抽奖
-        :param blindboxId:
-        :param token:
-        :return:
+        翻牌 - 抽奖
+        :param blind_box_id: 盲盒ID
+        :param auth_token: 认证令牌
+        :param app_id: 应用程序ID
+        :return: 返回抽奖结果的响应结果
         """
-        res = send_requests(method='get', url='/api/app/blindbox/lottery/' + str(blindboxId),
-                            data={
-                                'blindboxId': blindboxId
-                            }, token=token, appId=appId)
+        res = send_requests(method='get', url=f'/api/app/blindbox/lottery/{blind_box_id}',
+                            data={'blindboxId': blind_box_id}, token=auth_token, appId=app_id)
         return res
 
 
-    def myblindboxlottery(self, blindboxId, token, appId, pageSize=10, pageNum=1):
+    def my_Winning_record(self, blind_box_id: int, token: str, app_id: str,
+                          page_size: int = 10, page_num: int = 1) -> Dict:
         """
         获取中奖记录
-        :param blindboxId:
-        :param token:
-        :param appId:
-        :return:
+        :param blind_box_id: 盲盒ID
+        :param token: 认证令牌
+        :param app_id: 应用程序ID
+        :param page_size: 每页数量，默认为10
+        :param page_num: 页码，默认为1
+        :return: 返回中奖记录的响应结果
         """
-        res = send_requests(method='get', url='/api/app/blindbox/query/my/lottery/' + str(blindboxId),
-                            data={
-                                'blindboxId': blindboxId,
-                                'pageSize': pageSize,
-                                'pageNum': pageNum
-                            }, token=token,appId=appId)
+        data = {
+            'pageSize': page_size,
+            'pageNum': page_num
+        }
+        res = send_requests(method='get', url=f'/api/app/blindbox/query/my/lottery/{blind_box_id}',
+                            data=data, token=token, appId=app_id)
         return res
