@@ -22,7 +22,7 @@ from Common.handle_config import conf
 """
 
 
-def __handle_header(data_type, token=None, appid=None):
+def __handle_header(data_type, token=None, appId=None):
     """
     处理请求头。加上项目当中必带的请求头。如果有token，加上token。
     :param token: token值
@@ -36,12 +36,12 @@ def __handle_header(data_type, token=None, appid=None):
 
     if token:
         headers["Authorization"] = "Bearer {}".format(token)
-    if appid:
-        headers["app"] = appid
+    if appId:
+        headers["appId"] = appId
     return headers
 
 
-def send_requests(method, url, data=None, token=None, data_type=1, appid=None):
+def send_requests(method, url, data=None, token=None, data_type=1, appId=None):
     """
     :param method:
     :param url:
@@ -51,7 +51,7 @@ def send_requests(method, url, data=None, token=None, data_type=1, appid=None):
     """
     logger.info("发起一次HTTP请求")
     # 得到请求头
-    headers = __handle_header(data_type, token, appid)
+    headers = __handle_header(data_type, token, appId)
     # 得到完整的url - 拼接url
     # print('处理前的url', url)
     url = __pre_url(url)
@@ -112,17 +112,15 @@ def __pre_data(data):
 
 
 if __name__ == '__main__':
-    login_url = "/api/auth/authentication/mobile"
+    login_url = "api/login"
     login_datas = {
-            "appId": "wxdb8f809214c26e2e",
-            "type": "moblile",
-            "mobile": "13332978006",
-            "smsCode": "1"
-        }
+                    "username": 'admin',
+                    "password": 'admin123'
+                }
 
     resp = send_requests("POST", login_url, login_datas)
-    token = resp.json()["data"]["access_token"]
+    token = resp.json()["token"]
 
-    recharge_url = "/api/marketing/app/draw/query/my/lottery"
-    resp = send_requests(method="get", url=recharge_url, data=None, token=token)
+    # recharge_url = "/api/marketing/app/draw/query/my/lottery"
+    # resp = send_requests(method="get", url=recharge_url, data=None, token=token)
     # print(resp.json())

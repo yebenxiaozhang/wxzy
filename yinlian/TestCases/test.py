@@ -44,12 +44,19 @@
 #         print(case)
 #
 #
-method = 'get'
-method = method.upper()  # 大写处理
-if method == "GET":
-    print('1')
-elif method == 'PUT':
-    print('2')
-else:
-    print('3')
-    
+# method = 'get'
+# method = method.upper()  # 大写处理
+# if method == "GET":
+#     print('1')
+# elif method == 'PUT':
+#     print('2')
+# else:
+#     print('3')
+
+
+# a = 0
+#
+# while a != 5:
+#     print(a)
+#     a = a + 1
+#

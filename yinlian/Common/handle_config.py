@@ -18,7 +18,7 @@ class HandleConfig(ConfigParser):
         self.read(file_path, encoding="utf-8")
 
 
-file_path = os.path.join(conf_dir, "wxzy.ini")
+file_path = os.path.join(conf_dir, "yinlian.ini")
 conf = HandleConfig(file_path)
 # print(conf.get('log', 'name'))
 
