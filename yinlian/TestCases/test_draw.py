@@ -6,7 +6,7 @@ Project: yinlian
 Company: 无限主义
 ======================
 """
-import logging
+
 import unittest
 import time
 
