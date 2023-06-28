@@ -13,6 +13,7 @@ import time
 from Common.my_logger import logger
 from Common.yinlian_api import yinlian
 from Common.handle_config import conf
+from Common.handle_db import HandleDB
 from ddt import ddt,data
 from jsonpath import jsonpath
 
@@ -30,7 +31,14 @@ class draw(unittest.TestCase):
         res = cls.yinlian.getBlindbox(activity_type=2)
         cls.lind_box_Id = jsonpath(res.json(), '$.data.id')[0]
         logger.info('最新翻牌活动id为:' + str(cls.lind_box_Id))
+        # 建立数据库连接
+        cls.db = HandleDB()
         # 运行前数据的清洗？？？？？？？？？？？？？？？？？
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        logger.info('关闭游标、关闭数据库链接')
+        cls.db.close()
 
     @data(2,6)
     def test_001_tasksDraw(self, get_type):

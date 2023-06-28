@@ -236,3 +236,41 @@ class yinlian:
         res = send_requests(method='get', url=f'/api/app/blindbox/query/my/lottery/{blind_box_id}',
                             data=data, token=token, appId=app_id)
         return res
+
+    def sign_detail(self, blind_box_id:int, token:str) -> Dict:
+        """
+        瓜分详情
+        :param blind_box_id: 活动idID
+        :param token:认证令牌
+        :return:
+        """
+        res = send_requests(method='get', url=f'/api/app/sign/detail/{blind_box_id}',
+                            data={
+                                'blindboxId': blind_box_id
+                            }, token=token)
+        return res
+
+
+    def sign_flip(self, blind_box_id:int, token:str) -> Dict:
+        """
+        签到 - 瓜分千万积分
+        :param blind_box_id: 活动ID
+        :param token: 认证令牌
+        :return:
+        """
+        res = send_requests(method='get', url=f'/api/app/sign/flip/{blind_box_id}',
+                            data={'id': blind_box_id}, token=token)
+        return res
+
+
+    def sign_lottery(self, blind_box_id:int, token:str) -> Dict:
+        """
+        翻牌 - 瓜分千万积分
+        :param blind_box_id: 活动ID
+        :param token: 认证令牌
+        :return:
+        """
+        res = send_requests(method='get', url=f'api/app/sign/lottery/point/{blind_box_id}',
+                            data={'blindboxId': blind_box_id}, token=token)
+        return res
+
