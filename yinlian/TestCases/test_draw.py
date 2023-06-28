@@ -6,7 +6,7 @@ Project: yinlian
 Company: 无限主义
 ======================
 """
-
+import logging
 import unittest
 import time
 
@@ -30,26 +30,41 @@ class draw(unittest.TestCase):
         logger.info('现在进行获取最新翻牌活动id')
         res = cls.yinlian.getBlindbox(activity_type=2)
         cls.lind_box_Id = jsonpath(res.json(), '$.data.id')[0]
-        logger.info('最新翻牌活动id为:' + str(cls.lind_box_Id))
-        # 建立数据库连接
-        cls.db = HandleDB()
-        # 运行前数据的清洗？？？？？？？？？？？？？？？？？
+        logger.info('最新翻牌活动id为: {}'.format(cls.lind_box_Id))
+        logger.info('数据库清理数据')
+        db = HandleDB()  # 建立数据库连接
+        try:
+            logger.info('现在更新第一张表')
+            current_date = time.strftime('%Y-%m-%d')  # 获取当前日期的字符串表示
+            # 构建 SQL 查询语句，使用参数化查询
+            sql = f"""DELETE FROM mkt_blindbox_lottery WHERE user_id = '{conf.get('token', 'user_id')}' 
+                       AND blindbox_id = '{cls.lind_box_Id}' AND create_time LIKE '{current_date}%'"""
+            db.update(sql)
+            logger.info('现在更新第二张表')
+            sql = f"""DELETE FROM mkt_blindbox_task WHERE user_id = '{conf.get('token', 'user_id')}' 
+                       AND blindbox_id = '{cls.lind_box_Id}' AND create_time LIKE '{current_date}%'"""
+            db.update(sql)
+            logger.info('本次测试所需的表更新完毕，现在开始测试')
+        except Exception as e:
+            logger.error(f'数据库操作发生异常: {str(e)}')
+        finally:
+            db.close()  # 关闭数据库连接
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        logger.info('关闭游标、关闭数据库链接')
-        cls.db.close()
+    # @classmethod
+    # def tearDownClass(cls) -> None:
+    #     logger.info('关闭游标、关闭数据库链接')
+    #     cls.db.close()
 
     @data(2,6)
     def test_001_tasksDraw(self, get_type):
         """做任务进行抽奖"""
         logger.info('做任务获取翻牌次数，目前使用增加翻牌类型为 {}'.format(get_type))
-        res = self.yinlian.blindboxaddLottery(get_type=2, auth_token=conf.get('token', 'token'),
+        res = self.yinlian.blindboxaddLottery(get_type=get_type, auth_token=conf.get('token', 'token'),
                                               app_id=conf.get('appId', 'fpappId'))
         draw_number = jsonpath(res.json(), '$.data')[0]
         logger.info('获取翻牌次数为 {}'.format(draw_number))
         if draw_number == 0:
-            logger.info('本次分享未获得翻牌次数！！！！！！！如何进行判断今天分享过了没有？？？？未做判断！！！')
+            self.assertEqual(1,draw_number, msg='本次分享未获得翻牌次数！因开始前清理过数据库，故应取得次数')
         else:
             logger.info('本次分享获得翻牌次数: {}'.format(draw_number))
 
@@ -94,7 +109,7 @@ class draw(unittest.TestCase):
     def test_repetition_draw_get_lottery(self, get_type):
         """重复做任务，是否有获取翻牌次数"""
         logger.info('获取抽奖次数信息')
-        res = self.yinlian.blindboxInfo(blindbox_id=str(self.lindboxId), auth_token=conf.get('token', 'token'),
+        res = self.yinlian.blindboxInfo(blindbox_id=str(self.lind_box_Id), auth_token=conf.get('token', 'token'),
                                         app_id=conf.get('appId', 'fpappId'))
         number = jsonpath(res.json(), '$.data.lotteryNum')[0]
         logger.info('翻牌次数为: {}'.format(number))

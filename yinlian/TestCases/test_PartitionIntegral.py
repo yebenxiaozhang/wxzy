@@ -9,6 +9,7 @@ Company: 无限主义
 
 
 import unittest
+import time
 from Common.my_logger import logger
 from Common.yinlian_api import yinlian
 from Common.handle_config import conf
@@ -38,9 +39,15 @@ class PartitionIntegral(unittest.TestCase):
 
     def test_001(self):
         """签到3，6，7，翻牌"""
-        sql = 'select * from mkt_blindbox_lottery'
-        count = self.db.get_count(sql)
-        print(count)
+        current_date = time.strftime('%Y-%m-%d')        # 获取当前日期的字符串表示
+        # 构建 SQL 查询语句，将日期模式拼接到 LIKE 子句中
+        sql = f"""UPDATE mkt_blindbox_task SET deleted = 1 WHERE user_id = '{conf.get('token', 'user_id')}' 
+                 AND blindbox_id = '{self.lind_box_Id}' AND deleted = 0 AND create_time LIKE '{current_date}%'"""
+        sql1 = f"""UPDATE mkt_blindbox_lottery SET deleted = 1 WHERE user_id = '{conf.get('token', 'user_id')}' 
+                 AND blindbox_id = '{self.lind_box_Id}' AND deleted = 0 AND create_time LIKE '{current_date}%'"""
+        self.db.update(sql)
+        self.db.update(sql1)
+
         # res = self.yinlian.sign_flip(blind_box_id=self.lind_box_Id,token=conf.get('token', 'token'))
         # draw_number =  jsonpath(res.json(), '$.data')[0]
         # if draw_number == 1:
